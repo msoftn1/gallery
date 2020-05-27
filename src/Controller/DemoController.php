@@ -9,7 +9,22 @@ class DemoController
 
         $view = new View();
 
-        $view->data['images'] = json_encode([1,2,3,4,5,6,7,8,9,10]);
+
+        $images = [];
+        $cnt = 0;
+        foreach (new DirectoryIterator('../gallery') as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+
+            $images[] = str_ireplace(sprintf('.%s', $fileInfo->getExtension()),'', $fileInfo->getBasename()) ;
+
+            $cnt++;
+
+            if($cnt == 10) {
+                break;
+            }
+        }
+
+        $view->data['images'] = json_encode($images);
         $view->data['sizes'] = json_encode(array_map(
             fn(ImageSize $imageSize) => $imageSize->toArray(),
             $imageSizeList
